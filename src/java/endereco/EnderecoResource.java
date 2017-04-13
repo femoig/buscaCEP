@@ -29,7 +29,7 @@ public class EnderecoResource {
     @GET
     @Produces("applcation/json")
     @Consumes("applcation/json")
-    @Path("buscaCEP/{cep}")
+    @Path("buscaCEP/{cep:\\d+}") //Aceita somente números como CEP
     public Response buscaCEP(@PathParam("cep") String cep){
         
         int replaceIndex = 7;
