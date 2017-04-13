@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package endereco;
 
 import com.google.gson.Gson;
@@ -13,18 +8,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PUT;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.jboss.logging.Param;
 
-/**
- * REST Web Service
- *
- * @author Fernando.Ignacio
- */
 @Path("endereco")
-public class LocalidadeResource {
+public class EnderecoResource {
 
     @Context
     private UriInfo context;
@@ -32,51 +22,42 @@ public class LocalidadeResource {
     /**
      * Creates a new instance of LocalidadeResource
      */
-    public LocalidadeResource() {
+    public EnderecoResource() {
         listaEnderecos = getListaEndereco();
     }
-
-    /**
-     * Retrieves representation of an instance of Localidade.LocalidadeResource
-     * @return an instance of java.lang.String
-     */
-    @GET
-    @Produces("applcation/json")
-    @Path("endereco")
-    public String getJson() {
-       
-        Gson gson = new Gson();        
-        return gson.toJson(listaEnderecos);
-    }
     
     @GET
     @Produces("applcation/json")
-    @Path("endereco/buscaCEP/{cep}")
-    public String buscaCEP(@PathParam("cep") String cep){
+    @Consumes("applcation/json")
+    @Path("buscaCEP/{cep}")
+    public Response buscaCEP(@PathParam("cep") String cep){
         
-        for (Endereco endereco : listaEnderecos) {
-            if (endereco.cep.equals(cep)) {
-                Gson gson = new Gson();        
-                return gson.toJson(endereco);
+        int replaceIndex = 7;
+        
+        //Regex Validation
+        // ^\d{5}-\d{3}$
+        
+        do{
+            for (Endereco endereco : listaEnderecos) {
+                if (endereco.cep.equals(cep)) {
+                    Gson gson = new Gson();                            
+                    return Response.ok(gson.toJson(endereco), MediaType.APPLICATION_JSON).build();
+                }
             }
+                        
+            StringBuilder builder = new StringBuilder(cep);
+            builder.setCharAt(replaceIndex, '0');
+            cep = builder.toString();
+            
+            replaceIndex--;
+            
         }
+        while(replaceIndex > 0);
+    
         
-        
-        return "";
-        
-        
-        
+        return Response.status(Response.Status.NOT_FOUND).entity("CEP inválido").build();        
     }
     
-
-    /**
-     * PUT method for updating or creating an instance of LocalidadeResource
-     * @param content representation for the resource
-     */
-    @PUT
-    @Consumes(MediaType.APPLICATION_JSON)
-    public void putJson(String content) {
-    }
     
     public static ArrayList<Endereco> getListaEndereco(){
         Endereco e1 = new Endereco();
