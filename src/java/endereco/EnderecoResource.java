@@ -43,7 +43,7 @@ public class EnderecoResource {
                     Gson gson = new Gson();                            
                     return Response.ok(gson.toJson(endereco), MediaType.APPLICATION_JSON).build();
                 }
-            }
+            } 
                         
             StringBuilder builder = new StringBuilder(cep);
             builder.setCharAt(replaceIndex, '0');
