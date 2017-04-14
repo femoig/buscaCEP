@@ -2,6 +2,7 @@ package endereco;
 
 import com.google.gson.Gson;
 import java.util.ArrayList;
+import javax.validation.Valid;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
@@ -13,7 +14,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.jboss.logging.Param;
 
 @Path("endereco")
 public class EnderecoResource {
@@ -90,8 +90,20 @@ public class EnderecoResource {
     @POST
     @Consumes("applcation/json")
     @Produces("applcation/json")
-    @Path("{endereco}")
-    public Response post(@PathParam("endereco") Endereco item){            
+    @Path("atualizar/{endereco}")
+    public Response update(@Valid @PathParam("endereco") Endereco item){            
+        
+        listaEnderecos.remove(item.ID);
+        listaEnderecos.add(item);                
+                
+        return Response.ok(gson.toJson(listaEnderecos), MediaType.APPLICATION_JSON).build();                
+    }
+    
+    @POST
+    @Consumes("applcation/json")
+    @Produces("applcation/json")
+    @Path("inserir/{endereco}")
+    public Response post(@Valid @PathParam("endereco") Endereco item){            
         listaEnderecos.add(item);
         
         return Response.ok(gson.toJson(listaEnderecos), MediaType.APPLICATION_JSON).build();                
