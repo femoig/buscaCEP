@@ -6,7 +6,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
@@ -19,13 +21,16 @@ public class EnderecoResource {
     @Context
     private UriInfo context;
     private ArrayList<Endereco> listaEnderecos;
+    Gson gson = new Gson();
     /**
      * Creates a new instance of LocalidadeResource
      */
     public EnderecoResource() {
         listaEnderecos = getListaEndereco();
+        gson = new Gson();
     }
     
+    //http://localhost:8080/BuscaCEPService/resources/endereco/buscaCEP/99999999
     @GET
     @Produces("applcation/json")
     @Consumes("applcation/json")
@@ -39,8 +44,7 @@ public class EnderecoResource {
         
         do{
             for (Endereco endereco : listaEnderecos) {
-                if (endereco.cep.equals(cep)) {
-                    Gson gson = new Gson();                            
+                if (endereco.cep.equals(cep)) {                                                
                     return Response.ok(gson.toJson(endereco), MediaType.APPLICATION_JSON).build();
                 }
             } 
@@ -56,6 +60,41 @@ public class EnderecoResource {
     
         
         return Response.status(Response.Status.NOT_FOUND).entity("CEP inválido").build();        
+    }
+    
+    //http://localhost:8080/BuscaCEPService/resources/endereco/1
+    @DELETE
+    @Consumes("applcation/json")
+    @Produces("applcation/json")
+    @Path("{ID:\\d+}") 
+    public Response delete(@PathParam("ID") int ID){    
+        
+        for (Endereco endereco : listaEnderecos) {
+            if (endereco.ID == ID) {
+                listaEnderecos.remove(endereco);
+                return Response.ok(gson.toJson(listaEnderecos), MediaType.APPLICATION_JSON).build();                
+            }
+        }
+        
+        return Response.status(Response.Status.NO_CONTENT).entity("Endereço não encontrado").build();        
+    }
+    
+    //http://localhost:8080/BuscaCEPService/resources/endereco
+    @GET
+    @Consumes("applcation/json")
+    @Produces("applcation/json")
+    public Response get(){            
+        return Response.ok(gson.toJson(listaEnderecos), MediaType.APPLICATION_JSON).build();                
+    }
+        
+    @POST
+    @Consumes("applcation/json")
+    @Produces("applcation/json")
+    @Path("{endereco}")
+    public Response post(@PathParam("endereco") Endereco item){            
+        listaEnderecos.add(item);
+        
+        return Response.ok(gson.toJson(listaEnderecos), MediaType.APPLICATION_JSON).build();                
     }
     
     
@@ -84,3 +123,5 @@ public class EnderecoResource {
         return lista;
     }
 }
+
+

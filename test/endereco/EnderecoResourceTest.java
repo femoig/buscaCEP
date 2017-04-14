@@ -1,10 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package endereco;
 
+import com.google.gson.Gson;
 import java.util.ArrayList;
 import javax.ws.rs.core.Response;
 import org.junit.After;
@@ -43,28 +39,13 @@ public class EnderecoResourceTest {
      * Test of buscaCEP method, of class EnderecoResource.
      */
     @Test
-    public void testBuscaCEP() {
+    public void testBuscaCEP_NotFound() {
         System.out.println("buscaCEP");
-        String cep = "";
+        String cep = "99999999";
         EnderecoResource instance = new EnderecoResource();
-        Response expResult = null;
+        Response expResult = Response.status(Response.Status.NOT_FOUND).entity("CEP inválido").build();
         Response result = instance.buscaCEP(cep);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
+        assertEquals(expResult.getStatus(),result.getStatus());        
     }
-
-    /**
-     * Test of getListaEndereco method, of class EnderecoResource.
-     */
-    @Test
-    public void testGetListaEndereco() {
-        System.out.println("getListaEndereco");
-        ArrayList<Endereco> expResult = null;
-        ArrayList<Endereco> result = EnderecoResource.getListaEndereco();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-    
 }
